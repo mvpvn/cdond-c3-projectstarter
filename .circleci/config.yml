@@ -105,7 +105,7 @@ jobs:
       - restore_cache:
           keys: [frontend-build]
       - run:
-          name: Front-end test
+          name: Front-end scan
           command: |
              # Your code here
              cd frontend
