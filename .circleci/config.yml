@@ -168,14 +168,6 @@ jobs:
   configure-infrastructure:
     docker:
       - image: python:3.7-alpine3.11
-        environment:
-          TYPEORM_CONNECTION: $TYPEORM_CONNECTION
-          TYPEORM_HOST: $TYPEORM_HOST
-          TYPEORM_USERNAME: $TYPEORM_USERNAME
-          TYPEORM_PASSWORD: $TYPEORM_PASSWORD
-          TYPEORM_DATABASE: $TYPEORM_DATABASE
-          TYPEORM_ENTITIES: $TYPEORM_ENTITIES
-          TYPEORM_PORT: $TYPEORM_PORT
     steps:
       - checkout
       - add_ssh_keys:
@@ -195,14 +187,6 @@ jobs:
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
-        environment:
-          TYPEORM_CONNECTION: $TYPEORM_CONNECTION
-          TYPEORM_HOST: $TYPEORM_HOST
-          TYPEORM_USERNAME: $TYPEORM_USERNAME
-          TYPEORM_PASSWORD: $TYPEORM_PASSWORD
-          TYPEORM_DATABASE: $TYPEORM_DATABASE
-          TYPEORM_ENTITIES: $TYPEORM_ENTITIES
-          TYPEORM_PORT: $TYPEORM_PORT
     steps:
       - checkout
       - restore_cache:
@@ -222,15 +206,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: amazon/aws-cli
-        environment:
-          TYPEORM_CONNECTION: $TYPEORM_CONNECTION
-          TYPEORM_HOST: $TYPEORM_HOST
-          TYPEORM_USERNAME: $TYPEORM_USERNAME
-          TYPEORM_PASSWORD: $TYPEORM_PASSWORD
-          TYPEORM_DATABASE: $TYPEORM_DATABASE
-          TYPEORM_ENTITIES: $TYPEORM_ENTITIES
-          TYPEORM_PORT: $TYPEORM_PORT
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -238,10 +214,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            yum install -y tar gzip
-            yum install -y gcc-c++ make 
-            curl -sL https://rpm.nodesource.com/setup_14.x | -E bash - 
-            yum install -y nodejs
+            sudo apt-get update
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" 
+            unzip awscliv2.zip 
+            sudo ./aws/install
       - attach_workspace:
           at: ~/
       - run:
@@ -267,14 +243,6 @@ jobs:
   deploy-backend:
     docker:
       - image: python:3.7-alpine3.11
-        environment:
-          TYPEORM_CONNECTION: $TYPEORM_CONNECTION
-          TYPEORM_HOST: $TYPEORM_HOST
-          TYPEORM_USERNAME: $TYPEORM_USERNAME
-          TYPEORM_PASSWORD: $TYPEORM_PASSWORD
-          TYPEORM_DATABASE: $TYPEORM_DATABASE
-          TYPEORM_ENTITIES: $TYPEORM_ENTITIES
-          TYPEORM_PORT: $TYPEORM_PORT
     steps:
       - checkout
       - add_ssh_keys:
