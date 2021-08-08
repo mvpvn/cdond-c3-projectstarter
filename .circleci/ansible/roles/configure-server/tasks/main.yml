@@ -2,7 +2,7 @@
   - name: "install nodejs."
     become: yes
     yum:
-      name: ["nodejs"]
+      name: ["nodejs", "npm"]
       state: latest
       update_cache: yes
 
