@@ -1,5 +1,5 @@
 ---
   - name: Copy index test page
     template:
-      src: "/root/project/backend/dist"
+      src: "/root/project/backend"
       dest: "/home/ubuntu"

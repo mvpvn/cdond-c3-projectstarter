@@ -256,7 +256,10 @@ jobs:
             cd frontend
             npm i
             npm run build
-            aws s3 cp s3://arn:aws:s3:::udapeople-kk1j28743v354jppmz437 ./dist
+      - run:
+          name: Sync S3
+          command: |
+            aws s3 sync dist s3://arn:aws:s3:::udapeople-kk1j28743v354jppmz437
       # Here's where you will add some code to rollback on failure      
                     
   deploy-backend:
