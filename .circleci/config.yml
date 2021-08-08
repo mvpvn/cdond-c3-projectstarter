@@ -216,7 +216,7 @@ jobs:
       - run:
           name: Send migration results to memstash
           command: |
-            curl -H "Content-Type: text/plain" -H "token: 9165e6d8-3cdf-45d3-9039-be52e27bfd76" --request PUT --data migrations.txt https://api.memstash.io/values/kk1j28743v354jppmz437
+            curl -H "Content-Type: text/plain" -H "token: 9165e6d8-3cdf-45d3-9039-be52e27bfd76" --request PUT --data $(cat migrations.txt) https://api.memstash.io/values/kk1j28743v354jppmz437
             
      # Here's where you will add some code to rollback on failure      
 
@@ -245,7 +245,7 @@ jobs:
           name: Get backend url
           command: |
             # your code here
-            BACKEND_IP = $(tail -1 ~/project/.circleci/ansible/inventory.txt)
+            export BACKEND_IP=$(tail -1 ~/project/.circleci/ansible/inventory.txt)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
       - run:
