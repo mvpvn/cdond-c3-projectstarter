@@ -239,7 +239,7 @@ jobs:
           name: Install dependencies
           command: |
             yum install -y tar gzip
-            yum install nodejs
+            yum install -y nodejs
       - attach_workspace:
           at: ~/
       - run:
@@ -279,10 +279,20 @@ jobs:
           fingerprints: ["44:75:c3:9b:af:51:b7:b3:d2:d3:b4:11:f2:be:18:e4"]
       - attach_workspace:
           at: ~/
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
             apk add --update ansible
+            apk add --update npm
+      - run:
+          name: Back-end build
+          command: |
+             # Your code here
+             cd backend
+             npm i
+             npm run build
       - run:
           name: Deploy backend
           command: |
