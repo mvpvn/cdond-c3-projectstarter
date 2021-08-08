@@ -155,6 +155,10 @@ jobs:
             --filters Name=tag:Name,Values=backend-$WORKFLOW_ID \
             --output text >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
+      - run:
+          name: install tar utilities
+          command: |
+            yum install -y tar gzip
       - persist_to_workspace:
           root: ~/
           paths:
