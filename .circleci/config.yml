@@ -279,15 +279,11 @@ jobs:
       - attach_workspace:
           at: ~/
       - run:
-          name: Get backend url
-          command: |
-            # your code here
-            export BACKEND_IP=$(tail -1 ~/project/.circleci/ansible/inventory.txt)
-            export API_URL="http://${BACKEND_IP}:3030/api/status"
-            echo "${API_URL}"
-      - run:
           name: Backend smoke test.
           command: |
+            export BACKEND_IP=$(tail -1 ~/project/.circleci/ansible/inventory.txt)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
             curl ${API_URL}
       - run:
           name: Frontend smoke test.
