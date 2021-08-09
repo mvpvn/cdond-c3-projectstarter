@@ -10,10 +10,10 @@ commands:
           name: Install AWS CLI if not Exist
           when: on_fail
           command: |
-            if ! [ -x "$(command -v aws)" ]; 
+            if ! [ -x "$(command -v aws)" ]
             then
               #if no npm, then python env
-              if ! [ -x "$(command -v npm)" ];
+              if ! [ -x "$(command -v npm)" ]
               then 
                 pip install awscli
               else
