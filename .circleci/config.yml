@@ -282,7 +282,7 @@ jobs:
           name: Backend smoke test.
           command: |
             export BACKEND_IP=$(tail -1 ~/project/.circleci/ansible/inventory.txt)
-            export API_URL="http://${BACKEND_IP}:3030"
+            export API_URL="http://${BACKEND_IP}:3030/api/status"
             echo "${API_URL}"
             curl ${API_URL}
       - run:
@@ -291,8 +291,10 @@ jobs:
             export FRONTEND_IP="http://udapeople-$WORKFLOW_ID.s3-website-us-east-1.amazonaws.com"
             if curl -s ${FRONTEND_IP} | grep "Welcome"
             then
+              echo "pass"
               return 1
             else
+              echo "fail"
               return 1
             fi
       # Here's where you will add some code to rollback on failure  
