@@ -354,6 +354,10 @@ jobs:
             --tags project=udapeople-proj \
             --stack-name udapeoplestack \
             --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7}
+      - run:
+          name: install tar utilities
+          command: |
+            yum install -y tar gzip
       - persist_to_workspace:
           root: ~/
           paths:
