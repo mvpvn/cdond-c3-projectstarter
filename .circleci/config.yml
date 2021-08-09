@@ -237,7 +237,7 @@ jobs:
       - run:
           name: Sync S3
           command: |
-            aws s3 sync frontend/dist s3://arn:aws:s3:::udapeople-kk1j28743v354jppmz437
+            aws s3 sync frontend/dist s3://udapeople-kk1j28743v354jppmz437
       # Here's where you will add some code to rollback on failure      
                     
   deploy-backend:
