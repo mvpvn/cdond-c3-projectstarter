@@ -353,7 +353,7 @@ jobs:
             --template-file .circleci/files/cloudfront.yml \
             --tags project=udapeople-proj \
             --stack-name udapeoplestack \
-            --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7}
+            --parameter-overrides WorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: install tar utilities
           command: |
@@ -388,8 +388,10 @@ jobs:
             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
             then
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws s3 rb s3://udapeople-${OldWorkflowID} --force
               aws cloudformation delete-stack --stack-name "backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "frontend-${OldWorkflowID}"
+              echo "Stacks deleted succesfully"
             fi
             
 
