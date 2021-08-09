@@ -10,8 +10,10 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            # Your code here
-            exit 1
+            aws s3 rm s3://udapeople-$WORKFLOW_ID --recursive
+            aws s3 rb s3://udapeople-$WORKFLOW_ID --force
+            aws cloudformation delete-stack --stack-name frontend-$WORKFLOW_ID
+            aws cloudformation delete-stack --stack-name backend-$WORKFLOW_ID
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -20,16 +22,15 @@ commands:
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
+          when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
+            SUCCESS = $(curl -H "token: 9165e6d8-3cdf-45d3-9039-be52e27bfd76" --request GET https://api.memstash.io/values/$WORKFLOW_ID)
             if(( $SUCCESS==1 )); 
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              exit 1
+             cd backend
+             npm install
+             npm run migrations:revert
             fi
             
 jobs:
@@ -164,6 +165,8 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure      
+      - revert-migrations
+      - destroy-environment
 
   configure-infrastructure:
     docker:
@@ -182,7 +185,9 @@ jobs:
           name: Configure server
           command: |
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-      # Here's where you will add some code to rollback on failure      
+      # Here's where you will add some code to rollback on failure     
+      - revert-migrations
+      - destroy-environment 
 
   run-migrations:
     docker:
@@ -200,9 +205,15 @@ jobs:
       - run:
           name: Send migration results to memstash
           command: |
-            curl -H "Content-Type: text/plain" -H "token: 9165e6d8-3cdf-45d3-9039-be52e27bfd76" --request PUT --data $(cat backend/migrations.txt) https://api.memstash.io/values/kk1j28743v354jppmz437
-            
-     # Here's where you will add some code to rollback on failure      
+            if grep -q "has been executed successfully." backend/migrations.txt
+            then
+              curl -H "Content-Type: text/plain" -H "token: 9165e6d8-3cdf-45d3-9039-be52e27bfd76" --request PUT --data "1" https://api.memstash.io/values/$WORKFLOW_ID
+            else
+              curl -H "Content-Type: text/plain" -H "token: 9165e6d8-3cdf-45d3-9039-be52e27bfd76" --request PUT --data "0" https://api.memstash.io/values/$WORKFLOW_ID
+            fi
+      # Here's where you will add some code to rollback on failure      
+      - revert-migrations
+      - destroy-environment
 
   deploy-frontend:
     docker:
@@ -238,7 +249,9 @@ jobs:
           name: Sync S3
           command: |
             aws s3 sync frontend/dist s3://udapeople-kk1j28743v354jppmz437
-      # Here's where you will add some code to rollback on failure      
+      # Here's where you will add some code to rollback on failure   
+      - revert-migrations
+      - destroy-environment   
                     
   deploy-backend:
     docker:
@@ -266,6 +279,8 @@ jobs:
           command: |
             ansible-playbook -i ~/project/.circleci/ansible/inventory.txt .circleci/ansible/deploy-backend.yml -vvv
       # Here's where you will add some code to rollback on failure  
+      - revert-migrations
+      - destroy-environment
 
   smoke-test:
     docker:
@@ -298,6 +313,8 @@ jobs:
               return 1
             fi
       # Here's where you will add some code to rollback on failure  
+      - revert-migrations
+      - destroy-environment
 
 #   cloudfront-update:
 #     docker:
