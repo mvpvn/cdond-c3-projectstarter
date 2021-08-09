@@ -260,7 +260,7 @@ jobs:
       - run:
           name: Back-end zip
           command: |
-             tar -C backend -czvf artifact.tar.gz .
+            tar -C backend -czvf artifact.tar.gz .
       - run:
           name: Deploy backend
           command: |
@@ -275,19 +275,30 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # your code here
+            sudo apt install curl
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get backend url
           command: |
             # your code here
+            export BACKEND_IP=$(tail -1 ~/project/.circleci/ansible/inventory.txt)
+            export API_URL="http://${BACKEND_IP}:3030/api/status"
+            echo "${API_URL}"
       - run:
           name: Backend smoke test.
           command: |
-            # your code here
+            curl ${API_URL}
       - run:
           name: Frontend smoke test.
           command: |
-            # your code here
+            export FRONTEND_IP="http://udapeople-$WORKFLOW_ID.s3-website-us-east-1.amazonaws.com"
+            if curl -s ${URL} | grep "Welcome"
+            then
+              return 1
+            else
+              return 1
+            fi
       # Here's where you will add some code to rollback on failure  
 
 #   cloudfront-update:
