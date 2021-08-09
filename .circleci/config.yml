@@ -256,13 +256,11 @@ jobs:
           command: |
             apk add --update ansible
             apk add --update npm
+            apk add --update tar
       - run:
-          name: Back-end build
+          name: Back-end zip
           command: |
-             # Your code here
-             cd backend
-             npm i
-             npm run build
+             tar -C backend -czvf artifact.tar.gz .
       - run:
           name: Deploy backend
           command: |
