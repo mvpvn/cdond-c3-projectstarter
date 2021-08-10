@@ -349,7 +349,7 @@ jobs:
             aws cloudformation update-stack \
             --use-previous-template \
             --stack-name udapeoplestack \
-            --parameters ParameterKey=WorkFlowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
+            --parameters ParameterKey=WorkflowID,ParameterValue=${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: install tar utilities
           command: |
