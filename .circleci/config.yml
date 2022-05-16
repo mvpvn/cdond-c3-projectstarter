@@ -43,7 +43,7 @@ commands:
           when: on_fail
           command: |
             # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS=$(curl -H "token: 9165e6d8-3cdf-45d3-9039-be52e27bfd76" --request GET https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID:0:7})
+            SUCCESS=$(curl --insecure https://kvdb.io/294osPd86YnetHcf6CdoGA/migration_${CIRCLE_WORKFLOW_ID:0:7})
             echo "$SUCCESS"
             if(( $SUCCESS==1 )); 
             then
@@ -194,7 +194,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["44:75:c3:9b:af:51:b7:b3:d2:d3:b4:11:f2:be:18:e4"]
+          fingerprints: ["59:44:0b:7b:14:14:91:bd:1b:86:47:43:cb:48:83:8f"]
       - attach_workspace:
           at: ~/
       - run:
@@ -228,9 +228,9 @@ jobs:
           command: |
             if grep -q "has been executed successfully." backend/migrations.txt
             then
-              curl -H "Content-Type: text/plain" -H "token: 9165e6d8-3cdf-45d3-9039-be52e27bfd76" --request PUT --data "1" https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID:0:7}
+              curl --insecure "https://kvdb.io/294osPd86YnetHcf6CdoGA/migration_${CIRCLE_WORKFLOW_ID:0:7}" -d "1"
             else
-              curl -H "Content-Type: text/plain" -H "token: 9165e6d8-3cdf-45d3-9039-be52e27bfd76" --request PUT --data "0" https://api.memstash.io/values/${CIRCLE_WORKFLOW_ID:0:7}
+              curl --insecure "https://kvdb.io/294osPd86YnetHcf6CdoGA/migration_${CIRCLE_WORKFLOW_ID:0:7}" -d "0"
             fi
       # Here's where you will add some code to rollback on failure      
       - revert-migrations
@@ -276,7 +276,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["44:75:c3:9b:af:51:b7:b3:d2:d3:b4:11:f2:be:18:e4"]
+          fingerprints: ["59:44:0b:7b:14:14:91:bd:1b:86:47:43:cb:48:83:8f"]
       - attach_workspace:
           at: ~/
       - restore_cache:
